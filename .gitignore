@@ -1,0 +1,27 @@
+# Node modules
+node_modules/
+
+# Environment variables
+.env
+
+# Logs
+logs
+*.log
+
+# OS files
+.DS_Store
+
+# Build files
+build/
+dist/
+
+# Uploads (optional - recommended to ignore)
+server/uploads/
+
+# React
+client/node_modules/
+client/build/
+
+# Python
+__pycache__/
+*.pyc

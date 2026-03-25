@@ -1,0 +1,8 @@
+{
+    "codeBlocks.ignoredLanguageIds": [
+        "dotenv",
+        "plaintext",
+        "Log",
+        "ignore"
+    ]
+}
