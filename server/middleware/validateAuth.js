@@ -20,7 +20,7 @@ const validateRegister = (req, res, next) => {
       msg: "Password must be at least 6 characters, include letters and numbers"
     });
   }
-  console.log("regex ran")
+
 
   next();
   
