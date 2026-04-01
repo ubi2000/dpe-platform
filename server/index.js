@@ -4,6 +4,7 @@ const dotenv=require("dotenv")
 const connectDB =require("./config/db")
 const authRoutes=require("./routes/authRoutes")
 const authMiddleware=require("./middleware/authMiddleware")
+const propertyRoutes=require("./routes/propertyRoutes")
 
 dotenv.config()
 connectDB()
@@ -13,6 +14,7 @@ const app= express()
 app.use(cors())
 app.use(express.json())
 app.use("/api/auth",authRoutes)
+app.use("/api/properties", propertyRoutes);
 
 
 app.get("/",(req,res)=>{

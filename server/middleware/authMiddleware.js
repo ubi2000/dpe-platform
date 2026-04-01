@@ -10,7 +10,7 @@ const authMiddleware = (req, res, next) => {
         const cleanToken = token.slice(7)
         const decoded = jwt.verify(cleanToken, process.env.JWT_SECRET)
 
-        req.user = decoded
+        req.user = decoded.id
         next()
 
     } catch (error) {
