@@ -10,7 +10,8 @@ const propertySchema = new mongoose.Schema({
     },
     title: {
         type: String,
-        required: true
+        required: true,
+        trim: true
     },
     images: {
         type: [String],
@@ -34,7 +35,8 @@ const propertySchema = new mongoose.Schema({
         type: String,
         enum: ["apartment", "house", "studio"],
         required: true
-    }, address: {
+    },
+    address: {
         type: String,
         required: true
     },
@@ -45,6 +47,7 @@ const propertySchema = new mongoose.Schema({
     },
     heatingType: {
         type: String,
+        enum: ["gas", "electric", "oil", "wood"],
         required: true
     },
     predictedRating: {
