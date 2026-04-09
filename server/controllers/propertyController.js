@@ -9,6 +9,9 @@ const { generateReport } = require("../services/reportService")
 exports.createProperty = async (req, res) => {
     try {
         const { title, size, constructionYear, heatingType, address, propertyType } = req.body
+        if (!title || !size || !constructionYear) {
+            return res.status(400).json({ msg: "Missing fields" });
+        }
         const property = new Property({
             user: req.user,
             title,
@@ -18,6 +21,7 @@ exports.createProperty = async (req, res) => {
             address,
             propertyType
         })
+
         await property.save()
         res.status(201).json(property)
 
@@ -40,6 +44,53 @@ exports.getProperties = async (req, res) => {
 }
 
 
+//Update property
+
+exports.updateProperty = async (req, res) => {
+    try {
+
+        const property = await Property.findById(req.params.id)
+        if (!property) {
+            return res.status(400).json({ msg: " Property Not Found" })
+
+        }
+        if (property.user.toString() !== req.user) {
+            return res.status(403).json({ msg: 'Unauthorized' })
+        }
+        const { title, size, constructionYear, heatingType, address, propertyType, windowType } = req.body
+        const updatedProperty = await Property.findByIdAndUpdate(
+            req.params.id, { title, size, constructionYear, heatingType, address, propertyType, windowType },
+            { new: true }
+        )
+        res.json(updatedProperty)
+    }
+
+    catch (error) {
+        console.log(error)
+        res.status(500).json({ msg: "Update Failed" })
+    }
+}
+//Delete property
+exports.deleteProperty = async (req, res) => {
+    try {
+        const property = await Property.findById(req.params.id)
+        if (!property) {
+            return res.status(404).json({ msg: "Property not found" })
+        }
+        if (property.user.toString() !== req.user) {
+            return res.status(403).json({ msg: " Unathorized" })
+        }
+        await Property.findByIdAndDelete(req.params.id)
+
+        res.json({ msg: "property successfully deleted" })
+
+
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ msg: "Delete Failed" })
+    }
+}
+
 //image upload
 
 exports.uploadImages = async (req, res) => {
@@ -49,7 +100,9 @@ exports.uploadImages = async (req, res) => {
         if (!property) {
             return res.status(400).json({ msg: "No Property Found" })
         }
-
+        if (property.user.toString() !== req.user) {
+            return res.status(403).json({ msg: " Unathorized" })
+        }
         const imagePaths = req.files.map(file => file.path)
         property.images.push(...imagePaths)
         await property.save()
@@ -69,12 +122,12 @@ exports.analyzeProperty = async (req, res) => {
         if (!property) {
             return res.status(404).json({ msg: "property not found" })
         }
-        const result = analyzeProperty(property)
+        const result = await analyzeProperty(property)
 
         property.predictedRating = result.rating
         property.energyConsumption = result.energyConsumption;
         property.co2Emission = result.co2Emission;
-        property.recommendation = result.recommendation;
+        property.recommendations = result.recommendations;
         property.status = "analyzed";
 
         await property.save()
@@ -99,7 +152,7 @@ exports.getReport = async (req, res) => {
             return res.status(400).json({ msg: "Analyze Property first" })
 
         }
-        const report = generateReport(property)
+        const report = await generateReport(property)
         res.json({ report })
 
     } catch (error) {

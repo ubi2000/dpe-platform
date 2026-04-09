@@ -1,4 +1,4 @@
-const analyzeProperty = (property) => {
+const analyzeProperty = async (property) => {
     let score = 0
 
     //size impcat
@@ -12,6 +12,7 @@ const analyzeProperty = (property) => {
 
 
     //  Heating 
+    if (property.heatingType === "heat_pump") score += 3
     if (property.heatingType === "electric") score += 2;
     if (property.heatingType === "gas") score += 1;
 
@@ -19,6 +20,11 @@ const analyzeProperty = (property) => {
     if (property.windowType === "double") score += 2;
     if (property.windowType === "triple") score += 3;
 
+    //house type
+    if (property.propertyType === "house") score -= 1
+    if (property.propertyType === "studio") score += 1
+
+    score = Math.max(0, Math.min(10, score))
     let rating;
     if (score >= 7) rating = "A"
     else if (score >= 6) rating = "B";
@@ -33,24 +39,24 @@ const analyzeProperty = (property) => {
     const co2Emission = 5 + (7 - score) * 5
 
     //Recomm
-    const recommendation = []
+    const recommendations = []
 
     if (property.windowType === "single") {
-        recommendation.push("Upgrade to double=glazed windows")
+        recommendations.push("Upgrade to double=glazed windows")
 
     }
     if (property.constructionYear < 2000) {
-        recommendation.push("Improve insulation");
+        recommendations.push("Improve insulation");
     }
 
     if (property.heatingType === "oil") {
-        recommendation.push("Switch to energy-efficient heating");
+        recommendations.push("Switch to energy-efficient heating");
     }
     return {
         rating,
         energyConsumption,
         co2Emission,
-        recommendation
+        recommendations
     }
 }
 module.exports = { analyzeProperty }
